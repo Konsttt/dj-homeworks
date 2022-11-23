@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template import Context
 
 DATA = {
     'omlet': {
@@ -17,14 +18,43 @@ DATA = {
         'помидор, ломтик': 1,
     },
     # можете добавить свои рецепты ;)
+    'крутые_щи': {
+        'мясо, кг': 1.5,
+        'хрящи, г': 500,
+        'картошка, шт': 5,
+        'капуста, кг': 1,
+        'лук, шт': 2,
+        'зелень, г': 150,
+        'морковь, шт': 2,
+        'квашеная капуста, г': 500,
+        'перец молотый, г': 5,
+        'соль, г': 20,
+        'лавровый лист, шт': 3,
+    },
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
+
+def get_recipe(request, recipe):
+    x = DATA.get(recipe)  # x - вспомогательная переменная. Проверка на None, если нет запрошенного рецепта в DATA.
+    if x:
+        # Создаём новый словарь при каждом обновлении страницы(при каждом запросе).
+        # Иначе, если указано кол-во порций в параметрах запроса, то при обновлении страницы всегда идёт умножение старого значения
+        # Т.е. новый объект, вместо ссылки.
+        ingredients = dict(x)
+    else:
+        ingredients = x  # ingredients = None
+    servings = request.GET.get('servings')
+    if servings and x:  # Если словарь пустой x=None, то умножать на кол-во порций не нужно.
+        for key, value in ingredients.items():
+            if type(value) == int:
+                ingredients[key] = value * int(servings)
+            else:
+                ingredients[key] = round(value * int(servings), 2)
+    context = {'ingredients': ingredients, 'recipe': recipe}
+    return render(request, 'calculator/index.html', context)
+
+
+# Добавил главную страницу, если нет полей в строке запроса.
+def main_page(request):
+    context = {'text': 'Текст главной страницы'}
+    return render(request, 'calculator/main_page.html', context)

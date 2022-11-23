@@ -5,7 +5,7 @@
 <head>
     <!-- Basic Page Needs -->
     <meta charset="utf-8">
-    <title>Title</title>
+    <title>Moscow bus stations</title>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -31,7 +31,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for station in bus_stations %}
+            {% for station in page %}
                 <tr>
                     <td>{{ station.Name }}</td>
                     <td>{{ station.Street }}</td>

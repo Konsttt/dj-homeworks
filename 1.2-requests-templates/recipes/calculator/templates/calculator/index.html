@@ -6,8 +6,9 @@
 </head>
 <body>
 <h2>{{ recipe }}</h2>
+<p >(порций: {{ servings }})</p>
 {% for ingredient, amount in ingredients.items %}
-    <p>{{ ingredient }}: {{ amount }}</p>
+    <li>{{ ingredient }}: {{ amount }}</li>
 {% empty %}
     <p>Такого рецепта не знаю :(</p>
 {% endfor %}

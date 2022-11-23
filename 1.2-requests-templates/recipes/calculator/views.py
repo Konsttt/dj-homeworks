@@ -3,12 +3,12 @@ from django.template import Context
 
 DATA = {
     'omlet': {
-        'яйца, шт': 2,
+        'яйца, шт': 3,
         'молоко, л': 0.1,
-        'соль, ч.л.': 0.5,
+        'соль, ч.л.': 0.1,
     },
     'pasta': {
-        'макароны, г': 0.3,
+        'макароны, кг': 0.3,
         'сыр, г': 0.05,
     },
     'buter': {
@@ -50,7 +50,10 @@ def get_recipe(request, recipe):
                 ingredients[key] = value * int(servings)
             else:
                 ingredients[key] = round(value * int(servings), 2)
-    context = {'ingredients': ingredients, 'recipe': recipe}
+    else:
+        if not servings:  # Если кол-во порций в запросе не указано, то значит по умолчанию 1.
+            servings = 1
+    context = {'ingredients': ingredients, 'recipe': recipe, 'servings': servings}
     return render(request, 'calculator/index.html', context)
 
 

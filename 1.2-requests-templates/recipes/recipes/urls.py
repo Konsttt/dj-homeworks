@@ -18,6 +18,7 @@ from django.urls import path
 from calculator.views import get_recipe, main_page
 
 urlpatterns = [
-    path('<recipe>/', get_recipe),
-    path('', main_page),
+    path('<recipe>/', get_recipe),  # https://host/<recipe>/
+    path('', main_page),            # На случай https://host/
+    path('/', main_page),           # На случай https://host//
 ]

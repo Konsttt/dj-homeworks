@@ -46,7 +46,7 @@ def get_recipe(request, recipe):
     servings = request.GET.get('servings')
     if servings and x:  # Если словарь пустой x=None, то умножать на кол-во порций не нужно.
         for key, value in ingredients.items():
-            if type(value) == int:
+            if type(value) is int:
                 ingredients[key] = value * int(servings)
             else:
                 ingredients[key] = round(value * int(servings), 2)

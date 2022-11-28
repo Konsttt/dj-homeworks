@@ -3,8 +3,8 @@
     "model": "books.book",
     "pk": 1,
     "fields": {
-      "name": "Война и мир",
-      "author": "Ф.Д. Достоевский",
+      "name": "Братья Карамазовы",
+      "author": "Ф.М. Достоевский",
       "pub_date": "2018-02-27"
     }
   },
@@ -15,6 +15,60 @@
       "name": "1984",
       "author": "Джордж Оруэл",
       "pub_date": "2016-12-06"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 3,
+    "fields": {
+      "name": "Война и мир",
+      "author": "Л.Н. Толстой",
+      "pub_date": "2020-03-27"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 4,
+    "fields": {
+      "name": "Дуэль",
+      "author": "А.П. Чехов",
+      "pub_date": "2022-11-27"
+    }
+  },
+    {
+    "model": "books.book",
+    "pk": 5,
+    "fields": {
+      "name": "Записки охотника",
+      "author": "И.С. Тургенев",
+      "pub_date": "2012-08-19"
+    }
+  },
+    {
+    "model": "books.book",
+    "pk": 6,
+    "fields": {
+      "name": "Белый клык",
+      "author": "Джек Лондон",
+      "pub_date": "2021-04-27"
+    }
+  },
+    {
+    "model": "books.book",
+    "pk": 7,
+    "fields": {
+      "name": "Куликово поле",
+      "author": "Иван Шмелёв",
+      "pub_date": "2017-01-01"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 100,
+    "fields": {
+      "name": "Игрок",
+      "author": "Ф.М. Достоевский",
+      "pub_date": "2019-05-25"
     }
   }
 ]

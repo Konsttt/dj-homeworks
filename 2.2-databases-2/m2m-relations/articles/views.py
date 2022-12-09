@@ -1,14 +1,21 @@
+from django.db.models import Prefetch
 from django.shortcuts import render
 
-from articles.models import Article
+from articles.models import Article, ArticleTag, Tag
 
 
 def articles_list(request):
     template = 'articles/news.html'
-    context = {}
+    # object_list = Article.objects.all()  # Без prefetch_related 13 sql-запросов, 10мс
 
-    # используйте этот параметр для упорядочивания результатов
-    # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.order_by
-    ordering = '-published_at'
+    # С prefetch_related именно через класс Prefetch кол-во запросов снизилось до 3, 4мс
+    # Если бы не было сортировок по имени, дате и т.д., то можно было обойтись только простым .prefetch_related()
+    # Первый Prefetch кэширует промежуточную таблицу ArticleTag
+    # Второй вложенный Prefetch кэширует таблицу Tag
+    object_list = Article.objects.all().prefetch_related(
+        Prefetch('scopes', ArticleTag.objects.all().prefetch_related(
+            Prefetch('tag', Tag.objects.all()))))
+
+    context = {'object_list': object_list}
 
     return render(request, template, context)

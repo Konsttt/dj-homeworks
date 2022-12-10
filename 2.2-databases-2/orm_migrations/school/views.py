@@ -8,8 +8,9 @@ from .models import Student, Teacher
 def students_list(request):
     template = 'school/students_list.html'
 
-    students_objects = Student.objects.all().prefetch_related(
-        Prefetch('teachers', Teacher.objects.all().order_by('name'))).order_by('group', 'name')
+    students_objects = Student.objects.prefetch_related(
+        Prefetch('teachers', Teacher.objects.all().order_by('name'))).all().order_by('group', 'name')
+
     students = [{'name': s.name, 'group': s.group,
                  'teachers': [{'name': t.name, 'subject': t.subject} for t in s.teachers.all()]}
                 for s in students_objects]

@@ -1,89 +1,128 @@
 # примеры API-запросов
 
-@baseUrl = http://localhost:8000/api/v1
-
+###
 # создание продукта
-POST {{baseUrl}}/products/
+
+POST http://localhost:8000/api/v1/products/
 Content-Type: application/json
 
 {
-  "title": "Помидор",
-  "description": "Лучшие помидоры на рынке"
+  "title": "Икра кабачковая",
+  "description": "Заморская"
 }
 
 ###
 
-# получение продуктов
-GET {{baseUrl}}/products/
+# получение списка продуктов
+GET http://localhost:8000/api/v1/products/
 Content-Type: application/json
 
 ###
 
 # обновление продукта
-PATCH {{baseUrl}}/products/1/
+PATCH http://localhost:8000/api/v1/products/1/
 Content-Type: application/json
 
 {
-  "description": "Самые сочные и ароматные помидорки"
+  "description": "Луховицкие огурцы"
 }
 
 ###
 
-# удаление продукта
-DELETE {{baseUrl}}/products/1/
+# удаление продукта (и соответствующих записей каскадом из промежуточной таблицы)
+DELETE http://localhost:8000/api/v1/products/1/
 Content-Type: application/json
 
 ###
 
 # поиск продуктов по названию и описанию
-GET {{baseUrl}}/products/?search=помидор
+GET http://localhost:8000/api/v1/products/?search=икра
 Content-Type: application/json
 
 ###
 
 # создание склада
-POST {{baseUrl}}/stocks/
+# + создание новых позиций по продуктам на этом складе - в промежуточной таблице
+# если список продуктов пустой, то создаётся только новый склад
+POST http://localhost:8000/api/v1/stocks/
 Content-Type: application/json
 
 {
-  "address": "мой адрес не дом и не улица, мой адрес сегодня такой: www.ленинград-спб.ru3",
+  "address": "Москва3",
   "positions": [
     {
-      "product": 2,
-      "quantity": 250,
-      "price": 120.50
+      "product": 10,
+      "quantity": 300,
+      "price": 100
     },
     {
-      "product": 3,
-      "quantity": 100,
-      "price": 180
+      "product": 11,
+      "quantity": 1000,
+      "price": 50
+    },
+    {
+      "product": 12,
+      "quantity": 1000,
+      "price": 5000
+    }
+  ]
+}
+
+###
+# Изменение позиций по продуктам на указанном в url складе
+# Если таких продуктов нет на складе, то эти продукты вносятся на этот склад (создаются записи в промежуточной таблице)
+PATCH http://localhost:8000/api/v1/stocks/51/
+Content-Type: application/json
+
+{
+  "positions": [
+    {
+      "product": 12,
+      "quantity": 121212,
+      "price": 1212
+    },
+    {
+      "product": 10,
+      "quantity": 101010,
+      "price": 1010
     }
   ]
 }
 
 ###
 
-# обновляем записи на складе
-PATCH {{baseUrl}}/stocks/4/
+# удаление склада (и каскадом соответсвенно всех его записей из промежуточной таблицы)
+DELETE http://localhost:8000/api/v1/stocks/51/
 Content-Type: application/json
-
-{
-  "positions": [
-    {
-      "product": 2,
-      "quantity": 100,
-      "price": 130.80
-    },
-    {
-      "product": 3,
-      "quantity": 243,
-      "price": 145
-    }
-  ]
-}
 
 ###
 
-# поиск складов, где есть определенный продукт
-GET {{baseUrl}}/stocks/?products=2
+# поиск складов по адресу (filter - только полное совпадение(слово целиком)). Результат - возможна только одна запись.
+GET http://localhost:8000/api/v1/stocks/?address=Москва звонят колокола
 Content-Type: application/json
+
+###
+
+# поиск складов по адресу (search - поиск по части слова). Результат - возможны более одной записи.
+GET http://localhost:8000/api/v1/stocks/?search=Москв
+Content-Type: application/json
+
+###
+
+# поиск складов, где есть определенный продукт.
+# (products - это связующее поле m2m в модели Stock, по умолчанию ипользуются id-шники связанных сущностей)
+GET http://localhost:8000/api/v1/stocks/?products=12
+Content-Type: application/json
+
+###
+
+# поиск складов, где есть определенный продукт (Использовал search_fields = ['products__title'])
+GET http://localhost:8000/api/v1/stocks/?search=икр
+Content-Type: application/json
+
+###
+
+# Пагинация вывода списка складов
+GET http://localhost:8000/api/v1/stocks/?page=2
+
+###

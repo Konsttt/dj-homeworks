@@ -38,19 +38,31 @@ class StockSerializer(serializers.ModelSerializer):
     # 2) в цикле ищется на данном складе, очередной указанный в json продукты
     # 3) если продукт есть на данном складе, то обновляется информация по данному продукту (кол-во, цена)
     # 4) если таких продуктов на складе нет, то создаются новые записи этих продуктов для данного склада.
+    # UPDATE_OR_CREATE !!!!!!!!!!
     def update(self, instance, validated_data):
         positions = validated_data.pop('positions')
         stock = super().update(instance, validated_data)  # Если в UPDATE json запросе есть address, то обновится.
         for position in positions:
+            # # !!!!!!!!! Этот код можно заменить функцией update_or_create(). Код и описание ниже.
+            # product = position['product']
+            # position_stock_product = StockProduct.objects.filter(stock=stock, product=product)
+            # if position_stock_product.exists():
+            #     update_position = position_stock_product.first()
+            #     update_position.quantity = position['quantity']
+            #     update_position.price = position['price']
+            #     update_position.save()
+            # else:
+            #     StockProduct.objects.create(stock=stock, **position)
             product = position['product']
-            position_stock_product = StockProduct.objects.filter(stock=stock, product=product)
-            if position_stock_product.exists():
-                update_position = position_stock_product.first()
-                update_position.quantity = position['quantity']
-                update_position.price = position['price']
-                update_position.save()
-            else:
-                StockProduct.objects.create(stock=stock, **position)
+            StockProduct.objects.update_or_create(
+                stock=stock, product=product, defaults={'price': position['price'], 'quantity': position['quantity']}
+            )  # Метод update_or_create пытается извлечь объект из базы данных на основе заданного kwargs.
+            # Если совпадение найдено, оно обновляет поля, переданные в словаре defaults.
+            '''Алгоритм update_or_create получается такой: в таблице StockProduct ищутся записи по id склада и 
+            id продукта (и склад и продукт должны в своих таблицах существовать, иначе это неверный запрос - 
+            IntegrityError. Итак если и склад и продукт существуют в своих таблицах, но ни одной записи в промежуточной
+            таблице нет - то создаётся новая запись. То что в defaults - обновляется всегда. Не было записи - дефаултс
+            задаются указанные. Есть запись - дефаултс меняются на новые.)'''
         return stock
 
 

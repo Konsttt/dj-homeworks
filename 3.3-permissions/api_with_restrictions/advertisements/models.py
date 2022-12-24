@@ -28,3 +28,13 @@ class Advertisement(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    # Поле для метки Черновик
+    draft = models.BooleanField(default=False)
+    # Поле связи m2m с таблицей Избранное
+    favorites = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Favorite', related_name='favorites_adv')
+
+
+# Таблицу для Избранного (промежуточная таблица между Users и Advertisement)
+class Favorite(models.Model):
+    user_has_favor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    favor_adv = models.ForeignKey(Advertisement, on_delete=models.CASCADE)

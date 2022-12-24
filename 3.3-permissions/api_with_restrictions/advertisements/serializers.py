@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
+from rest_framework.exceptions import ValidationError
 from advertisements.models import Advertisement
 
 
@@ -9,8 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name',
-                  'last_name',)
+        fields = ('id', 'username', 'first_name', 'last_name',)
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
@@ -23,7 +22,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advertisement
         fields = ('id', 'title', 'description', 'creator',
-                  'status', 'created_at', )
+                  'status', 'created_at', 'draft')
 
     def create(self, validated_data):
         """Метод для создания"""
@@ -40,6 +39,16 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Метод для валидации. Вызывается при создании и обновлении."""
 
-        # TODO: добавьте требуемую валидацию
-
+        count_open = Advertisement.objects.filter(creator=self.context["request"].user, status='OPEN').count()
+        if count_open >= 10 and self.context["request"].stream.method == 'POST':
+            raise ValidationError('У вас уже 10 открытых объявлений (это лимит).'
+                                  'Вы можете закрыть старое объявление и только потом добавить новое.')
+        elif count_open >= 10 and self.context["request"].stream.method == 'PATCH' and data['status'] == 'OPEN':
+            raise ValidationError('У вас уже 10 открытых объявлений (это лимит).'
+                                  'Чтобы открыть это объявление, закройте любое другое объявление.')
         return data
+
+    # # !!!
+    # ##### Вот здесь вопрос в def validate(self, data):  правильно ли я доставал метод из request-а ?   ###
+    # #####      self.context["request"].stream.method                                                   ###
+    # #####  Слишком монструозно )))  В дебаге посмотрел, где лежит. Может легче способ есть?            ###

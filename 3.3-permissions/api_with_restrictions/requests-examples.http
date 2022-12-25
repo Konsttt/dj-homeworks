@@ -18,12 +18,12 @@ Content-Type: application/json
 ###
 
 # поменять своё объявление
-PATCH http://localhost:8000/api/advertisements/38/
+PATCH http://localhost:8000/api/advertisements/42/
 Content-Type: application/json
 Authorization: Token 4cf59a51ba32addab5223a716694259d0c1ee477
 
 {
-  "status": "CLOSED"
+  "status": "OPEN"
 }
 
 ###
@@ -41,7 +41,7 @@ Authorization: Token a5844d9419c7816aa85976581c31d02b1bb35d32
 ###
 
 # попытка поменять чужое объявление (только статус)
-PATCH http://localhost:8000/api/advertisements/1/
+PATCH http://localhost:8000/api/advertisements/42/
 Content-Type: application/json
 Authorization: Token a5844d9419c7816aa85976581c31d02b1bb35d32
 

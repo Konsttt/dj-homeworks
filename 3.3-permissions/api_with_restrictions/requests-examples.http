@@ -52,7 +52,7 @@ Authorization: Token a5844d9419c7816aa85976581c31d02b1bb35d32
 ###
 
 # Удаление своего объявления
-DELETE http://localhost:8000/api/advertisements/40/
+DELETE http://localhost:8000/api/advertisements/42/
 Authorization: Token 4cf59a51ba32addab5223a716694259d0c1ee477
 ###
 

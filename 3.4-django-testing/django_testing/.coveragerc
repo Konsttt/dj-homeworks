@@ -1,0 +1,2 @@
+[run]
+omit = tests/*, .venv/*, .pytest_cache/*, students/migrations/*

@@ -8,16 +8,16 @@ from students.models import Course
 
 
 @pytest.mark.django_db
-def test_one_course_get(client, course_factory):
-    course = course_factory()
-    url = reverse('courses-list')  # basename+'-list' подставляем в reverse. Результат /api/v1/courses/
+def test_one_course_get(client, course_factory, num_records=10):
+    courses = course_factory(_quantity=num_records)
+    random_course = courses[randint(0, num_records - 1)]
+    # Функция reverse работает так: url=reverse(<basename>+'-list')='/api/v1/courses/'
+    url = reverse('courses-list') + f'{random_course.id}/'
     response = client.get(url)
     assert response.status_code == HTTP_200_OK
-    resp_json = response.json()
-    result = resp_json[0]
+    result = response.json()
     assert result
-    assert len(resp_json) == 1
-    assert course.name == result['name']
+    assert result['name'] == random_course.name
 
 
 @pytest.mark.django_db
